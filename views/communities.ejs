@@ -1,0 +1,297 @@
+<%- include('partials/header') %>
+
+<!-- Main Community Section -->
+<div style="width: 90%; padding: 20px; margin-top: 1vh !important">
+  <div>
+    <div>
+      <div>
+        <h1>Communities</h1>
+      </div>
+      <div>
+        <div class="communities-list">
+          <% communities.forEach(community => { %>
+          <div class="community-card">
+            <div>
+              <h5>
+                <a href="/communities/<%= community._id %>"
+                  ><%= community.name %></a
+                >
+              </h5>
+              <% if (community.members.includes(user._id)) { %>
+              <button class="join-btn" data-community-id="<%= community._id %>">
+                Leave
+              </button>
+              <% } else { %>
+              <button class="join-btn" data-community-id="<%= community._id %>">
+                Join
+              </button>
+              <% } %>
+            </div>
+            <p><%= community.description %></p>
+            <small>Members: <%= community.members.length %></small>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Community Modal -->
+<div
+  id="createCommunityModal"
+  tabindex="-1"
+  aria-labelledby="createCommunityModalLabel"
+  aria-hidden="true"
+>
+  <div>
+    <div>
+      <div>
+        <h2 id="createCommunityModalLabel">Create New Community</h2>
+       
+      </div>
+      <div>
+        <form id="createCommunityForm">
+          <div>
+            <label>Community Name</label>
+            <input type="text" name="name" required />
+          </div>
+          <div>
+            <label>Description</label>
+            <textarea name="description" rows="3" required></textarea>
+          </div>
+          <button type="submit">Create Community</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Include Bootstrap JS and Popper.js -->
+<script
+  src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+  crossorigin="anonymous"
+></script>
+
+<script>
+  document
+    .getElementById("createCommunityForm")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+      const formData = new FormData(this);
+
+      fetch("/communities", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.community) {
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(
+              document.getElementById("createCommunityModal")
+            );
+            modal.hide();
+
+            // Add new community to the list
+            const newCommunity = `
+              <div class="community-card">
+                <div>
+                  <h5><a href="/communities/${data.community._id}">${data.community.name}</a></h5>
+                  <button class="join-btn" data-community-id="${data.community._id}">
+                    Join
+                  </button>
+                </div>
+                <p>${data.community.description}</p>
+                <small>Members: 1</small>
+              </div>`;
+            document.querySelector(".communities-list").innerHTML +=
+              newCommunity;
+          }
+        })
+        .catch((error) => {
+          console.error("Error creating community:", error);
+        });
+    });
+</script>
+
+<!-- Custom Styles -->
+<style>
+  :root {
+    --mainColor: #ee6227;
+    --textColor: #ffffff;
+    --lightBackground: #373f51;
+    --inputBackground: #f9f9f9;
+    --inputBorder: #cccccc;
+    --inputText: #333333;
+  }
+
+ 
+
+    h1,h2{
+      margin-left:5vw;
+      color:var(--textColor)
+    }
+  /* Style for the main "Create Community" button */
+  .create-community-btn {
+    background-color: var(--mainColor);
+    color: var(--textColor);
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+
+  .create-community-btn:hover {
+    background-color: #d75e1f;
+  }
+
+  /* Style for the community card list */
+  .communities-list {
+    margin-top: 20px;
+    width: 80%; /* Reduced width of the container */
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .community-card {
+    background-color: var(--lightBackground);
+    color: var(--textColor);
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border-bottom: 2px solid white; /* White border */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added box shadow */
+  }
+
+  .community-card h5 a {
+    color: var(--textColor);
+    text-decoration: none;
+  }
+
+  .community-card h5 a:hover {
+    text-decoration: underline;
+  }
+
+  /* Position the Join/Leave button to the right */
+  .community-card button {
+    background-color: var(--mainColor);
+    color: var(--textColor);
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+    float: right; /* Position to the right */
+  }
+
+  .community-card button:hover {
+    background-color: #d75e1f;
+  }
+
+  /* Style for the Create Community modal form */
+  #createCommunityModal .modal-content {
+    padding: 20px;
+    background-color: var(--lightBackground);
+    color: var(--textColor);
+    border-radius: 8px;
+    width: 400px; /* Reduced form width */
+  }
+
+  /* Form fields inside the modal */
+  #createCommunityModal input,
+  #createCommunityModal textarea {
+    width: 100%;
+    padding: 8px; /* Reduced padding */
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #333;
+  }
+
+  #createCommunityModal button[type="submit"] {
+    background-color: var(--mainColor);
+    color: var(--textColor);
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+  }
+
+  #createCommunityModal button[type="submit"]:hover {
+    background-color: #d75e1f;
+  }
+
+
+
+
+
+  
+
+ 
+  /* Updated styles for Create Community Form */
+  #createCommunityForm {
+    width: 70%;
+    margin: 0 auto; /* Center the form */
+    background-color: var(--lightBackground);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    
+  }
+
+  #createCommunityForm label {
+    font-size: 18px;
+    color: var(--textColor);
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  #createCommunityForm input,
+  #createCommunityForm textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid var(--inputBorder);
+    border-radius: 5px;
+    background-color: var(--inputBackground);
+    color: var(--inputText);
+    font-size: 14px;
+  }
+
+  #createCommunityForm input:focus,
+  #createCommunityForm textarea:focus {
+    outline: none;
+    border-color: var(--mainColor);
+    box-shadow: 0 0 5px var(--mainColor);
+  }
+
+  #createCommunityForm button[type="submit"] {
+    background-color: var(--mainColor);
+    color: var(--textColor);
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+
+  #createCommunityForm button[type="submit"]:hover {
+    background-color: #d75e1f;
+  }
+
+
+  
+</style>
+
+</style>
+
+<%- include('partials/footer') %>

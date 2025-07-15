@@ -1,0 +1,34 @@
+/*variable Declaration */
+:root {
+  --mainColor: #ee6227;
+  --textColor: #ffffff;
+  --lightBackground: #373f51;
+}
+.container {
+  background-color: var(--lightBackground);
+}
+
+.container a:link {
+  color: var(--textColor);
+  background-color: #ee6227;
+}
+.community-card {
+  transition: all 0.3s ease;
+  border: var(--mainColor) 1px solid;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.community-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.communities-list {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.community-members {
+  color: #666;
+  font-size: 0.9rem;
+}

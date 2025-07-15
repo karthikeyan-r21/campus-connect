@@ -1,0 +1,36 @@
+# Node.js dependencies
+/node_modules/
+
+# Logs
+*.log
+*.log.*
+
+# Environment variables
+.env
+
+# npm package lock file (if you don't want to track it in Git)
+package-lock.json
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# IDE/editor directories and files
+.vscode/
+.idea/
+
+# Build output and coverage files
+/dist/
+/build/
+/coverage/
+
+# Temporary files
+*.tmp
+*.swp
+
+# Optional: Ignore test reports and build artifacts
+/coverage/
+*.tgz
+
+# Ignore .env files with sensitive credentials
+.env.*

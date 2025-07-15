@@ -1,0 +1,293 @@
+/*variable Declaration */
+:root {
+  --mainColor: #ee6227;
+  --textColor: #ffffff;
+  --lightBackground: #373f51;
+}
+
+/*NAVBAR STYLES*/
+.logo {
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+}
+/* Modern Navbar Enhancements */
+.navbar {
+  background: rgba(39, 44, 61, 0.95) !important;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 4px rgba(238,98,39,0.08);
+  border-radius: 0 0 18px 18px;
+  padding: 0.5rem 1.5rem;
+  margin-bottom: 18px;
+  z-index: 100;
+}
+
+.navbar .navbar-brand {
+  color: var(--mainColor) !important;
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-size: 1.7rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.2s;
+}
+
+.navbar .navbar-brand:hover {
+  color: #fff !important;
+}
+
+.navbar .nav-link {
+  color: var(--textColor) !important;
+  font-weight: 500;
+  font-size: 1.08rem;
+  margin: 0 0.5rem;
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  transition: background 0.2s, color 0.2s;
+  background: none !important;
+}
+
+.navbar .nav-link:hover, .navbar .nav-link.active {
+  background: var(--mainColor);
+  color: #fff !important;
+}
+
+.navbar .navbar-toggler {
+  border: none;
+  background: transparent;
+}
+
+.navbar .navbar-toggler:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--mainColor);
+}
+
+.navbar .logo {
+  height: 42px;
+  width: 42px;
+  border-radius: 50%;
+  margin-right: 8px;
+  box-shadow: 0 2px 8px rgba(238,98,39,0.10);
+}
+
+@media (max-width: 991px) {
+  .navbar {
+    border-radius: 0 0 12px 12px;
+    padding: 0.5rem 1rem;
+  }
+  .navbar .nav-link {
+    margin: 0.2rem 0;
+    padding: 0.5rem 1rem;
+  }
+}
+
+.header a,
+.header i {
+  color: var(--mainColor);
+  font-size: large;
+}
+
+.header .navbar .nav-item #home {
+  color: var(--mainColor) !important;
+}
+* changes part */ .header .navbar .nav-item #htext {
+  color: var(--mainColor);
+  border: 1px solid white;
+  font-size: 18px;
+}
+
+.header .navbar .nav-item #htext:hover {
+  color: var(--textColor);
+}
+
+/* NAVBAR LOGOUT BUTTON ALIGNMENT FOR LARGE SCREENS */
+@media (min-width: 992px) {
+  .header .navbar .navbar-collapse .logout {
+    position: absolute;
+    right: 2vw;
+    width: 5vw;
+    margin: 3px;
+    transition: all 0.3s ease; /* Smooth lift */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Pushes the Logout button to the far right */
+  }
+
+  .header .navbar .navbar-collapse .logout:hover {
+    transform: translateY(1.5px); /* Move up */
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/*
+
+changes part
+
+*/
+.header .btn,
+.mainContent .createpost {
+  background-color: var(--mainColor);
+  color: var(--textColor);
+  border: none;
+}
+
+.header .btn:hover,
+.mainContent .createpost:hover {
+  background-color: var(--textColor);
+  color: var(--mainColor);
+}
+
+.header .nav-item:hover i,
+.header .navbar-brand:hover {
+  border-radius: 5px;
+  color: var(--textColor);
+}
+
+.header .form-control,
+.header .form-control:focus {
+  background: transparent;
+  width: 30vw;
+  color: var(--textColor);
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+  transition: 0.3s ease;
+}
+.search {
+  position: relative;
+}
+
+.search .fas {
+  background: transparent;
+  color: var(--mainColor);
+  position: absolute;
+  top: 8px;
+  right: 5%;
+}
+
+.header .search {
+  margin-right: 7vw;
+}
+
+.header .login {
+  margin-left: 1vw;
+  margin-right: 2vw;
+}
+
+.header .fa-people-group {
+  margin-top: 7px;
+}
+
+.header .navbar-brand {
+  margin-left: 1vw;
+  font-weight: 500;
+}
+
+@media screen and (min-width: 480px) {
+  .search {
+    width: fit-content;
+    margin-bottom: 1vh;
+  }
+  .search .fas {
+    position: absolute;
+    top: 10px;
+    right: 8%;
+  }
+}
+
+/*BODY STYLES*/
+
+body {
+  margin-top: 10vh !important;
+  background-color: var(--lightBackground) !important;
+  height: auto !important;
+  max-width: 100vw !important;
+}
+
+.left-main {
+  background-color: #2f354a;
+  min-height: 90vh;
+  margin-right: 2vw;
+}
+
+.left-main input,
+.left-main input:focus {
+  margin-left: 1vw;
+  margin-right: 2vw;
+  min-width: 35vw;
+  box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+  transition: 0.3s ease;
+  background: transparent;
+  border: none;
+  background-color: var(--lightBackground);
+}
+
+.right-main {
+  width: fit-content;
+  height: 250px;
+  padding-top: 2vh;
+  background-color: #2f354a;
+}
+
+.right-main .section {
+  border-bottom: 1px solid var(--lightBackground);
+  margin-bottom: 1vh;
+}
+
+.fa-floppy-disk,
+.fa-user {
+  color: var(--mainColor);
+}
+
+.fa-user {
+  border-radius: 50%;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  margin-left: 20px;
+}
+
+/* Main filled button for navbar (Logout) */
+.btn-main {
+  background: var(--mainColor) !important;
+  color: #fff !important;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(238,98,39,0.10);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.btn-main:hover, .btn-main:focus {
+  background: #fff !important;
+  color: var(--mainColor) !important;
+  box-shadow: 0 4px 16px rgba(238,98,39,0.18);
+  outline: none;
+}
+
+.floating-create-btn {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 64px;
+  height: 64px;
+  background: var(--mainColor);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  box-shadow: 0 4px 16px rgba(238,98,39,0.18);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  z-index: 200;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  text-decoration: none;
+}
+.floating-create-btn:hover, .floating-create-btn:focus {
+  background: #fff;
+  color: var(--mainColor);
+  box-shadow: 0 8px 24px rgba(238,98,39,0.28);
+  transform: scale(1.08);
+}

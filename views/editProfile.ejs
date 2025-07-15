@@ -1,0 +1,258 @@
+<%- include('partials/header') %>
+
+<div class="container" style="margin-top: 100px !important">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="text-white">Edit Profile</h3>
+        </div>
+        <div class="card-body">
+          <form action="/profile/edit" method="POST" enctype="multipart/form-data">
+            <!-- Profile Picture Section -->
+            <div class="mb-4 text-center">
+              <div class="profile-picture-preview mb-3">
+                <% if (user.profilePicture) { %>
+                  <img src="<%= user.profilePicture %>" alt="Current Profile Picture" class="profile-picture-edit">
+                <% } else { %>
+                  <div class="profile-picture-placeholder-edit">
+                    <i class="fas fa-user fa-3x"></i>
+                  </div>
+                <% } %>
+              </div>
+              <div class="mb-3">
+                <label for="profilePicture" class="form-label text-white">Profile Picture</label>
+                <!-- Custom styled upload button -->
+                <div class="d-flex flex-column align-items-center">
+                  <label for="profilePicture" class="btn btn-primary mb-2" style="cursor:pointer;">
+                    <i class="fas fa-upload"></i> Upload Profile Photo
+                  </label>
+                  <input type="file" class="form-control visually-hidden" id="profilePicture" name="profilePicture" accept="image/*">
+                  <small class="text-muted">Upload a new profile picture (JPG, PNG, GIF, WebP - Max 5MB)</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Personal Information -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="name" class="form-label text-white">Full Name</label>
+                  <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="email" class="form-label text-white">Email</label>
+                  <input type="email" class="form-control" id="email" value="<%= user.email %>" disabled>
+                  <small class="text-muted">Email cannot be changed</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="studentId" class="form-label text-white">Student ID</label>
+                  <input type="text" class="form-control" id="studentId" name="studentId" value="<%= user.studentId || '' %>">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="department" class="form-label text-white">Department</label>
+                  <input type="text" class="form-control" id="department" name="department" value="<%= user.department || '' %>">
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="bio" class="form-label text-white">Bio</label>
+              <textarea class="form-control" id="bio" name="bio" rows="4" placeholder="Tell us about yourself..."><%= user.bio || '' %></textarea>
+            </div>
+
+            <div class="mb-4 mt-4 p-3 rounded" style="background: #23283a; border: 1px solid #373f51;">
+              <h5 class="text-white mb-3" style="font-size: 1.1rem;">Change Password <button type="button" id="togglePasswordFields" class="btn btn-sm btn-outline-light ms-2">Change</button></h5>
+              <div id="passwordFields" style="display: none;">
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label for="currentPassword" class="form-label text-white">Current Password</label>
+                    <input type="password" class="form-control" id="currentPassword" name="currentPassword">
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="newPassword" class="form-label text-white">New Password</label>
+                    <input type="password" class="form-control" id="newPassword" name="newPassword">
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="confirmPassword" class="form-label text-white">Confirm New Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
+                  </div>
+                </div>
+                <div id="changePasswordMsg" class="mb-2"></div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <a href="/profile" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Profile
+              </a>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.profile-picture-edit {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #ee6227;
+}
+
+.profile-picture-placeholder-edit {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background-color: #2f354a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #ee6227;
+  color: #ee6227;
+  margin: 0 auto;
+}
+
+.card {
+  background-color: #2f354a;
+  border: 1px solid #373f51;
+}
+
+.card-header {
+  background-color: #373f51;
+  border-bottom: 1px solid #373f51;
+}
+
+.form-control {
+  background-color: #373f51;
+  border: 1px solid #4a5568;
+  color: white;
+}
+
+.form-control:focus {
+  background-color: #373f51;
+  border-color: #ee6227;
+  color: white;
+  box-shadow: 0 0 0 0.2rem rgba(238, 98, 39, 0.25);
+}
+
+.form-control:disabled {
+  background-color: #2d3748;
+  color: #a0aec0;
+}
+
+.btn-primary {
+  background-color: #ee6227;
+  border-color: #ee6227;
+}
+
+.btn-primary:hover {
+  background-color: #d53f00;
+  border-color: #d53f00;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+</style>
+
+<script>
+// Preview profile picture before upload
+const fileInput = document.getElementById('profilePicture');
+fileInput.addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const preview = document.querySelector('.profile-picture-preview');
+      preview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="profile-picture-edit">`;
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// Handle password change inside edit profile
+const editForm = document.querySelector('form[action="/profile/edit"]');
+
+// Toggle password fields
+const toggleBtn = document.getElementById('togglePasswordFields');
+const passwordFields = document.getElementById('passwordFields');
+toggleBtn.addEventListener('click', function() {
+  if (passwordFields.style.display === 'none') {
+    passwordFields.style.display = '';
+    toggleBtn.textContent = 'Cancel';
+  } else {
+    passwordFields.style.display = 'none';
+    toggleBtn.textContent = 'Change';
+    // Clear password fields and messages
+    editForm.currentPassword.value = '';
+    editForm.newPassword.value = '';
+    editForm.confirmPassword.value = '';
+    document.getElementById('changePasswordMsg').innerHTML = '';
+  }
+});
+
+editForm.addEventListener('submit', async function(e) {
+  const current = editForm.currentPassword.value.trim();
+  const newP = editForm.newPassword.value.trim();
+  const confirm = editForm.confirmPassword.value.trim();
+  const msgDiv = document.getElementById('changePasswordMsg');
+  msgDiv.innerHTML = '';
+  if (passwordFields.style.display !== 'none' && (current || newP || confirm)) {
+    e.preventDefault();
+    if (!current || !newP || !confirm) {
+      msgDiv.innerHTML = '<div class="alert alert-danger">Please fill all password fields to change password.</div>';
+      return;
+    }
+    if (newP !== confirm) {
+      msgDiv.innerHTML = '<div class="alert alert-danger">New passwords do not match.</div>';
+      return;
+    }
+    msgDiv.innerHTML = 'Saving...';
+    try {
+      const res = await fetch('/profile/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword: current, newPassword: newP, confirmPassword: confirm })
+      });
+      const result = await res.json();
+      if (result.success) {
+        msgDiv.innerHTML = '<div class="alert alert-success">' + result.message + '</div>';
+        editForm.currentPassword.value = '';
+        editForm.newPassword.value = '';
+        editForm.confirmPassword.value = '';
+        setTimeout(() => { msgDiv.innerHTML = ''; passwordFields.style.display = 'none'; toggleBtn.textContent = 'Change'; }, 1500);
+      } else {
+        msgDiv.innerHTML = '<div class="alert alert-danger">' + (result.error || result.message) + '</div>';
+      }
+    } catch (err) {
+      msgDiv.innerHTML = '<div class="alert alert-danger">Error changing password.</div>';
+    }
+    return;
+  }
+  // Otherwise, allow normal profile update
+});
+</script>
+
+<%- include('partials/footer') %> 
