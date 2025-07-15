@@ -49,13 +49,18 @@ app.use((req, res, next) => {
 });
 
 // MongoDB Connection
+if (!process.env.MONGODB_URI) {
+  console.error("ERROR: MONGODB_URI environment variable is not set. Please set it in your Render dashboard or .env file.");
+  process.exit(1);
+}
+
 mongoose
-  .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  });
 
 // View Engine
 app.set("view engine", "ejs");
