@@ -1,0 +1,12 @@
+<h1>Error</h1>
+<p><%= message %></p>
+<% if (typeof error !== 'undefined' && error) { %>
+  <% if (error.message) { %>
+    <pre><%= error.message %></pre>
+    <% if (error.stack) { %>
+      <details style="color: #888;"><summary>Stack Trace</summary><pre><%= error.stack %></pre></details>
+    <% } %>
+  <% } else { %>
+    <pre><%= JSON.stringify(error, null, 2) %></pre>
+  <% } %>
+<% } %>

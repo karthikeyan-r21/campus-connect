@@ -1,0 +1,182 @@
+<%- include('partials/header') %>
+
+<div class="container" style="margin-top: 100px !important">
+  <!-- Community Information Section -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h3><%= community.name %></h3>
+      <p><%= community.description %></p>
+    </div>
+  </div>
+
+  <!-- Create Post Section -->
+  <div class="create-post-section mb-4">
+    <h3 class="text-white">Create a Post in <%= community.name %></h3>
+    <% if (typeof message !== 'undefined' && message) { %>
+      <div class="alert alert-info"><%= message %></div>
+    <% } %>
+    <form
+      id="createPostForm"
+      method="POST"
+      action="/communities/<%= community._id %>/posts"
+      autocomplete="off"
+    >
+      <div id="form-message" class="mb-3"></div>
+      <div class="mb-3">
+        <label for="postTitle" class="form-label text-white">Title</label>
+        <input
+          type="text"
+          class="form-control"
+          id="postTitle"
+          name="title"
+          placeholder="Enter your post title"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="postContent" class="form-label text-white">Content</label>
+        <textarea
+          class="form-control"
+          id="postContent"
+          name="content"
+          rows="5"
+          placeholder="Write your post content here..."
+          required
+        ></textarea>
+      </div>
+      <button type="submit" class="btn" id="submitBtn">Create Post</button>
+    </form>
+  </div>
+  <script>
+    // Prevent double submission and add client-side validation
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('createPostForm');
+      const submitBtn = document.getElementById('submitBtn');
+      const messageDiv = document.getElementById('form-message');
+      form.addEventListener('submit', function(e) {
+        // Client-side validation
+        const title = document.getElementById('postTitle').value.trim();
+        const content = document.getElementById('postContent').value.trim();
+        if (!title || !content) {
+          e.preventDefault();
+          messageDiv.innerHTML = '<div class="alert alert-danger">Title and content are required.</div>';
+          return false;
+        }
+        // Disable button to prevent double submit
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Posting...';
+      });
+      // Re-enable button if page does not reload (e.g. network error)
+      window.addEventListener('beforeunload', function() {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Post';
+      });
+    });
+  </script>
+  <script>
+    window.CURRENT_USER_ID = '<%= user._id %>';
+  </script>
+  <style>
+    .btn {
+      color: white;
+      background-color: #ee6227;
+    }
+    .btn:hover {
+      background-color: white;
+      color: #ee6227;
+    }
+  </style>
+  <!-- Posts Section -->
+  <div class="posts-section">
+    <h3 class="text-white">Posts in <%= community.name %></h3>
+    <% if (posts.length === 0) { %>
+    <p class="text-muted">No posts yet. Be the first to create one!</p>
+    <% } else { %> <% posts.forEach((post) => { %>
+    <div class="post-card card mb-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h5 class="card-title text-white"><%= post.title %></h5>
+          <div class="post-author">
+            <% if (post.createdBy && post.createdBy.profilePicture) { %>
+              <img src="<%= post.createdBy.profilePicture %>" alt="<%= post.createdBy.name %>" class="author-avatar">
+            <% } else { %>
+              <div class="author-avatar-placeholder">
+                <i class="fas fa-user"></i>
+              </div>
+            <% } %>
+            <span class="author-name"><%= post.createdBy ? post.createdBy.name : 'Unknown User' %></span>
+          </div>
+        </div>
+        <p class="card-text text-muted"><%= post.content %></p>
+        <% if (post.imageUrl) { %>
+          <div class="mt-3 text-center">
+            <img src="<%= post.imageUrl %>" alt="Post image" class="post-image" style="width: 200px; height: 200px; object-fit: cover; border-radius: 8px;">
+          </div>
+        <% } %>
+        <div class="d-flex justify-content-between align-items-center">
+          <small class="text-muted">
+            <%= post.createdAt.toDateString() %>
+          </small>
+          <div class="like-section">
+            <button class="btn btn-sm like-btn" data-post-id="<%= post._id %>">
+              <i class="fas fa-heart <%= post.likes && post.likes.includes(user._id) ? 'text-danger' : 'text-muted' %>"></i>
+              <span class="like-count"><%= post.likes ? post.likes.length : 0 %></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }); %> <% } %>
+  </div>
+</div>
+
+<script src="/js/community.js"></script>
+<script src="/js/profile.js"></script>
+
+<style>
+.post-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.author-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.author-avatar-placeholder {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #2f354a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ee6227;
+  font-size: 12px;
+}
+
+.author-name {
+  color: #ee6227;
+  font-weight: 500;
+}
+
+.like-section {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.post-image, .card-text img {
+  width: 200px !important;
+  height: 200px !important;
+  object-fit: cover !important;
+  border-radius: 8px !important;
+  display: inline-block;
+  margin: 8px 0;
+}
+</style>
+
+<%- include('partials/footer') %>
