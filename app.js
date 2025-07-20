@@ -8,6 +8,7 @@ const postRoutes = require("./routes/postRoutes");
 const uploadRoute = require("./routes/upload");
 const communityRoutes = require("./routes/communityRoutes");
 const profileRoutes = require("./routes/profile");
+const MongoStore = require('connect-mongo');
 require("dotenv").config();
 
 const app = express();
@@ -32,6 +33,10 @@ app.use(
     secret: process.env.SESSION_SECRET || "secret-key",
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      collectionName: 'sessions',
+    }),
     cookie: {
       secure: process.env.NODE_ENV === "production",
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
