@@ -51,11 +51,13 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
+      console.log("Login error: User not found for email", email);
       return res.render('auth/login', { message: 'User not found! Please sign up.' });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
+      console.log("Login error: Incorrect password for email", email);
       return res.render('auth/login', { message: 'Incorrect password!' });
     }
 
@@ -66,9 +68,12 @@ router.post('/login', async (req, res) => {
       email: user.email,
     };
 
+    // Add this line to log session info
+    console.log("Session after login:", req.session);
+
     res.redirect('/dashboard');
   } catch (err) {
-    console.error(err);
+    console.error("Login route error:", err);
     res.status(500).send('Server error');
   }
 });
