@@ -1,68 +1,57 @@
 <%- include('partials/header') %>
 
 <!-- Main Community Section -->
-<div style="width: 90%; padding: 20px; margin-top: 1vh !important">
-  <div>
-    <div>
-      <div>
-        <h1>Communities</h1>
+<div style="max-width: 900px; margin: 40px auto 0 auto;">
+  <h1 class="text-center" style="color:#ff6934; font-weight:700; letter-spacing:1px; text-shadow:0 2px 8px rgba(0,0,0,0.08); margin-bottom:0;">Communities</h1>
+  <div class="divider" style="border-bottom: 1.5px solid rgba(255,255,255,0.18); margin: 18px 0 28px 0;"></div>
+  <div class="communities-list">
+    <% communities.forEach(community => { %>
+    <div class="community-card-glass">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">
+          <a href="/communities/<%= community._id %>" class="community-link"><%= community.name %></a>
+        </h5>
+        <% if (community.members.includes(user._id)) { %>
+        <button class="join-btn-glass" data-community-id="<%= community._id %>">Leave</button>
+        <% } else { %>
+        <button class="join-btn-glass" data-community-id="<%= community._id %>">Join</button>
+        <% } %>
       </div>
-      <div>
-        <div class="communities-list">
-          <% communities.forEach(community => { %>
-          <div class="community-card">
-            <div>
-              <h5>
-                <a href="/communities/<%= community._id %>"
-                  ><%= community.name %></a
-                >
-              </h5>
-              <% if (community.members.includes(user._id)) { %>
-              <button class="join-btn" data-community-id="<%= community._id %>">
-                Leave
-              </button>
-              <% } else { %>
-              <button class="join-btn" data-community-id="<%= community._id %>">
-                Join
-              </button>
-              <% } %>
-            </div>
-            <p><%= community.description %></p>
-            <small>Members: <%= community.members.length %></small>
-          </div>
-          <% }) %>
-        </div>
-      </div>
+      <p class="mb-1" style="color:#fff; opacity:0.85;"><%= community.description %></p>
+      <small style="color:#ff6934; font-weight:500;">Members: <%= community.members.length %></small>
     </div>
+    <% }) %>
   </div>
 </div>
 
-<!-- Create Community Modal -->
+<!-- Floating Create Community Button -->
+<button id="showCreateCommunityBtn" class="floating-create-btn" title="Create Community">
+  <i class="fas fa-plus"></i>
+</button>
+
+<!-- Create Community Modal (hidden by default) -->
 <div
   id="createCommunityModal"
   tabindex="-1"
   aria-labelledby="createCommunityModalLabel"
   aria-hidden="true"
+  style="display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.25); z-index:1050; align-items:center; justify-content:center;"
 >
-  <div>
-    <div>
-      <div>
-        <h2 id="createCommunityModalLabel">Create New Community</h2>
-       
-      </div>
-      <div>
-        <form id="createCommunityForm">
-          <div>
-            <label>Community Name</label>
-            <input type="text" name="name" required />
-          </div>
-          <div>
-            <label>Description</label>
-            <textarea name="description" rows="3" required></textarea>
-          </div>
-          <button type="submit">Create Community</button>
-        </form>
-      </div>
+  <div style="display:flex; align-items:center; justify-content:center; width:100vw; height:100vh;">
+    <div class="glass-card-community" style="z-index:1060;">
+      <button id="closeCreateCommunityModal" type="button" class="btn-close btn-close-white position-absolute end-0 mt-2 me-3" aria-label="Close" style="z-index:1061;"></button>
+      <h2 id="createCommunityModalLabel" class="text-center mb-3">Create New Community</h2>
+      <form id="createCommunityForm">
+        <div class="form-section form-floating mb-4">
+          <input type="text" name="name" id="community-name" class="form-control" placeholder="Community Name" required />
+          <label for="community-name">Community Name</label>
+        </div>
+        <div class="form-section mb-4">
+          <label for="community-description" class="form-label" style="color:#ff6934;font-weight:500;">Description</label>
+          <textarea name="description" id="community-description" class="form-control" rows="3" placeholder="Describe your community..." required style="resize:vertical; min-height: 80px;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-publish mt-2">Create Community</button>
+      </form>
     </div>
   </div>
 </div>
@@ -78,6 +67,23 @@
 ></script>
 
 <script>
+  // Show/hide create community modal
+  const showBtn = document.getElementById('showCreateCommunityBtn');
+  const modal = document.getElementById('createCommunityModal');
+  const closeBtn = document.getElementById('closeCreateCommunityModal');
+  if (showBtn && modal) {
+    showBtn.onclick = () => { modal.style.display = 'flex'; };
+  }
+  if (closeBtn && modal) {
+    closeBtn.onclick = () => { modal.style.display = 'none'; };
+  }
+  // Hide modal when clicking outside the card
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) modal.style.display = 'none';
+    });
+  }
+
   document
     .getElementById("createCommunityForm")
     .addEventListener("submit", function (event) {
@@ -91,24 +97,10 @@
         .then((response) => response.json())
         .then((data) => {
           if (data.community) {
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(
-              document.getElementById("createCommunityModal")
-            );
-            modal.hide();
-
+            modal.style.display = 'none';
             // Add new community to the list
             const newCommunity = `
-              <div class="community-card">
-                <div>
-                  <h5><a href="/communities/${data.community._id}">${data.community.name}</a></h5>
-                  <button class="join-btn" data-community-id="${data.community._id}">
-                    Join
-                  </button>
-                </div>
-                <p>${data.community.description}</p>
-                <small>Members: 1</small>
-              </div>`;
+              <div class=\"community-card-glass\">\n                <div class=\"d-flex justify-content-between align-items-center mb-2\">\n                  <h5 class=\"mb-0\"><a href=\"/communities/${data.community._id}\" class=\"community-link\">${data.community.name}</a></h5>\n                  <button class=\"join-btn-glass\" data-community-id=\"${data.community._id}\">Join</button>\n                </div>\n                <p class=\"mb-1\" style=\"color:#fff; opacity:0.85;\">${data.community.description}</p>\n                <small style=\"color:#ff6934; font-weight:500;\">Members: 1</small>\n              </div>`;
             document.querySelector(".communities-list").innerHTML +=
               newCommunity;
           }
@@ -130,168 +122,166 @@
     --inputText: #333333;
   }
 
- 
-
-    h1,h2{
-      margin-left:5vw;
-      color:var(--textColor)
-    }
-  /* Style for the main "Create Community" button */
-  .create-community-btn {
-    background-color: var(--mainColor);
-    color: var(--textColor);
-    padding: 10px 15px;
+  .glass-card-community {
+    background: rgba(255, 255, 255, 0.13);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 24px;
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    padding: 48px 48px 40px 48px;
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+    transition: max-width 0.2s, padding 0.2s;
+  }
+  .glass-card-community h2 {
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: 1px;
+    color: #ff6934;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-align: center;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .form-section {
+    margin-bottom: 32px;
+  }
+  .form-floating > .form-control, .form-floating > .form-control:focus {
+    background: rgba(255,255,255,0.18);
+    color: #23283a;
+    border: 1.5px solid #ff6934;
+    border-radius: 12px;
+    box-shadow: none;
+    min-height: 56px;
+    font-size: 1.1rem;
+  }
+  .form-floating > label {
+    color: #ff6934;
+    font-weight: 500;
+    left: 1.2rem;
+    font-size: 1.08rem;
+  }
+  .form-control:focus {
+    border-color: #ee6227;
+    box-shadow: 0 0 0 0.2rem rgba(238, 98, 39, 0.10);
+  }
+  .btn-publish {
+    background: linear-gradient(90deg, #ff6934 0%, #ee6227 100%);
+    color: #fff;
+    font-weight: 600;
     border: none;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 20px;
+    border-radius: 12px;
+    padding: 14px 0;
+    width: 100%;
+    font-size: 1.18rem;
+    box-shadow: 0 4px 16px rgba(255, 105, 52, 0.10);
+    transition: background 0.2s, transform 0.2s;
+    margin-top: 18px;
+    letter-spacing: 0.5px;
   }
-
-  .create-community-btn:hover {
-    background-color: #d75e1f;
+  .btn-publish:hover, .btn-publish:focus {
+    background: linear-gradient(90deg, #ee6227 0%, #ff6934 100%);
+    color: #fff;
+    transform: translateY(-2px) scale(1.03);
   }
-
-  /* Style for the community card list */
-  .communities-list {
-    margin-top: 20px;
-    width: 80%; /* Reduced width of the container */
-    margin-left: auto;
-    margin-right: auto;
+  .community-card-glass {
+    background: rgba(255,255,255,0.10);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(31,38,135,0.10);
+    padding: 24px 28px 18px 28px;
+    margin-bottom: 18px;
+    border: 1.5px solid rgba(255,255,255,0.13);
+    color: #fff;
+    transition: box-shadow 0.2s, border 0.2s;
   }
-
-  .community-card {
-    background-color: var(--lightBackground);
-    color: var(--textColor);
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    border-bottom: 2px solid white; /* White border */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added box shadow */
-  }
-
-  .community-card h5 a {
-    color: var(--textColor);
+  .community-link {
+    color: #ff6934;
     text-decoration: none;
+    font-weight: 600;
+    font-size: 1.15rem;
+    transition: color 0.2s;
   }
-
-  .community-card h5 a:hover {
+  .community-link:hover {
+    color: #fff;
     text-decoration: underline;
   }
-
-  /* Position the Join/Leave button to the right */
-  .community-card button {
-    background-color: var(--mainColor);
-    color: var(--textColor);
-    padding: 5px 10px;
+  .join-btn-glass {
+    background: linear-gradient(90deg, #ff6934 0%, #ee6227 100%);
+    color: #fff;
     border: none;
-    cursor: pointer;
-    font-size: 14px;
-    border-radius: 5px;
-    float: right; /* Position to the right */
-  }
-
-  .community-card button:hover {
-    background-color: #d75e1f;
-  }
-
-  /* Style for the Create Community modal form */
-  #createCommunityModal .modal-content {
-    padding: 20px;
-    background-color: var(--lightBackground);
-    color: var(--textColor);
     border-radius: 8px;
-    width: 400px; /* Reduced form width */
-  }
-
-  /* Form fields inside the modal */
-  #createCommunityModal input,
-  #createCommunityModal textarea {
-    width: 100%;
-    padding: 8px; /* Reduced padding */
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #ffffff;
-    color: #333;
-  }
-
-  #createCommunityModal button[type="submit"] {
-    background-color: var(--mainColor);
-    color: var(--textColor);
-    padding: 10px 15px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-  }
-
-  #createCommunityModal button[type="submit"]:hover {
-    background-color: #d75e1f;
-  }
-
-
-
-
-
-  
-
- 
-  /* Updated styles for Create Community Form */
-  #createCommunityForm {
-    width: 70%;
-    margin: 0 auto; /* Center the form */
-    background-color: var(--lightBackground);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    
-  }
-
-  #createCommunityForm label {
-    font-size: 18px;
-    color: var(--textColor);
-    margin-bottom: 5px;
-    display: block;
-  }
-
-  #createCommunityForm input,
-  #createCommunityForm textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid var(--inputBorder);
-    border-radius: 5px;
-    background-color: var(--inputBackground);
-    color: var(--inputText);
-    font-size: 14px;
-  }
-
-  #createCommunityForm input:focus,
-  #createCommunityForm textarea:focus {
+    padding: 7px 18px;
+    font-size: 1rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(255, 105, 52, 0.10);
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
     outline: none;
-    border-color: var(--mainColor);
-    box-shadow: 0 0 5px var(--mainColor);
   }
-
-  #createCommunityForm button[type="submit"] {
-    background-color: var(--mainColor);
-    color: var(--textColor);
-    padding: 12px 20px;
-    border: none;
+  .join-btn-glass:hover, .join-btn-glass:focus {
+    background: #fff;
+    color: #ff6934;
+    box-shadow: 0 4px 16px rgba(255,105,52,0.18);
+  }
+  .floating-create-btn {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 64px;
+    height: 64px;
+    background: var(--mainColor);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    box-shadow: 0 4px 16px rgba(238,98,39,0.18);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    z-index: 2000;
     cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    border: none;
+    outline: none;
+    text-decoration: none;
   }
-
-  #createCommunityForm button[type="submit"]:hover {
-    background-color: #d75e1f;
+  .floating-create-btn:hover, .floating-create-btn:focus {
+    background: #fff;
+    color: var(--mainColor);
+    box-shadow: 0 8px 24px rgba(238,98,39,0.28);
+    transform: scale(1.08);
   }
-
-
-  
-</style>
-
+  @media (max-width: 900px) {
+    .glass-card-community {
+      max-width: 99vw;
+      padding: 18px 4vw 18px 4vw;
+    }
+    .community-card-glass {
+      padding: 16px 6vw 12px 6vw;
+    }
+    .floating-create-btn {
+      right: 12px;
+      bottom: 12px;
+      width: 56px;
+      height: 56px;
+      font-size: 1.8rem;
+    }
+  }
+  @media (max-width: 600px) {
+    .glass-card-community {
+      padding: 10px 2vw 10px 2vw;
+    }
+    .community-card-glass {
+      padding: 10px 2vw 10px 2vw;
+    }
+    .floating-create-btn {
+      right: 8px;
+      bottom: 8px;
+      width: 48px;
+      height: 48px;
+      font-size: 1.3rem;
+    }
+  }
 </style>
 
 <%- include('partials/footer') %>
